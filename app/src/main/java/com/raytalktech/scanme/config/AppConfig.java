@@ -1,16 +1,19 @@
 package com.raytalktech.scanme.config;
 
+import com.raytalktech.scanme.BuildConfig;
+
 public class AppConfig {
 
     //if you wanted to change, please remember to added *.db filetype
     public static String DB_NAME = "ScanMe.db";
 
-    //TODO: Change using buildConfig
     //Change this URL on LocalConfig
-    public static String BASE_URL = "https://atma-dev.com/";
+    public static String BASE_URL = BuildConfig.RELEASE_URL;
 
-    //App can save data last scan
-    public static boolean isAppScanAble = false;
+    /**
+     * To change Icon, you can use this generator
+     * https://romannurik.github.io/AndroidAssetStudio/index.html
+     */
 
     /**
      * General Response Message

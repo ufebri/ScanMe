@@ -8,10 +8,25 @@
     android:orientation="vertical"
     tools:context=".ui.login.LoginActivity">
 
+    <TextView
+        android:id="@+id/tv_titleApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textSize="60sp"
+        android:textStyle="bold" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimens_margin_16">
+        android:layout_margin="@dimen/dimens_margin_16"
+        app:boxBackgroundColor="@android:color/holo_orange_dark"
+        app:boxStrokeColor="@android:color/holo_orange_dark"
+        app:hintTextColor="@android:color/holo_orange_dark">
 
         <AutoCompleteTextView
             android:id="@+id/et_username"
@@ -22,6 +37,7 @@
             android:hint="@string/login_username"
             android:imeOptions="actionNext"
             android:inputType="text"
+            android:textColorHighlight="@android:color/holo_orange_dark"
             android:textSize="15sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -30,6 +46,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dimens_margin_16"
+        app:boxBackgroundColor="@android:color/holo_orange_dark"
+        app:boxStrokeColor="@android:color/holo_orange_dark"
+        app:hintTextColor="@android:color/holo_orange_dark"
         app:passwordToggleEnabled="true">
 
         <AutoCompleteTextView
@@ -41,6 +60,7 @@
             android:hint="@string/login_password"
             android:imeOptions="actionDone"
             android:inputType="textPassword"
+            android:textColorHighlight="@android:color/holo_orange_dark"
             android:textSize="15sp" />
 
     </com.google.android.material.textfield.TextInputLayout>

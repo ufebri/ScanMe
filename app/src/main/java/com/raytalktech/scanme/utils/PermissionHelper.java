@@ -12,26 +12,25 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.raytalktech.scanme.config.AppConfig;
+import com.raytalktech.scanme.config.Constant;
 
 public class PermissionHelper extends Activity {
 
     private boolean isAllowing = false;
     private final Context context;
     private final String TAG = getClass().getSimpleName();
+    private final String permissionItem;
 
-    public PermissionHelper(Context context) {
+    public PermissionHelper(Context context, String permissionItem) {
         this.context = context;
+        this.permissionItem = permissionItem;
     }
 
     public void setAllowing(boolean allowing) {
         isAllowing = allowing;
     }
 
-    public static class PERMISSION_CONSTANT_CODE {
-        public static final int CAMERA = 0;
-    }
-
-    public boolean isPermissionAllowing(String permissionItem) {
+    public boolean isPermissionAllowing() {
         if (ActivityCompat.checkSelfPermission(context, permissionItem) == PackageManager.PERMISSION_GRANTED) {
             //Added Check Permission Item
             switch (permissionItem) {
@@ -61,7 +60,7 @@ public class PermissionHelper extends Activity {
         //Added Rationale Request Permission
         switch (permissionItem) {
             case Manifest.permission.CAMERA:
-                ActivityCompat.requestPermissions((FragmentActivity) context, new String[]{permissionItem}, PERMISSION_CONSTANT_CODE.CAMERA);
+                ActivityCompat.requestPermissions((FragmentActivity) context, new String[]{permissionItem}, Constant.PERMISSION_CAMERA);
                 break;
             default:
                 getGeneralErrorMessagePermission(AppConfig.GeneralResponseMessage.RC_03);
@@ -69,27 +68,14 @@ public class PermissionHelper extends Activity {
         }
     }
 
-    private boolean isPermissionGranted(int lengthResult, int isGranted) {
+    public boolean isPermissionGranted(int lengthResult, int isGranted, String permission) {
         boolean isAccepted = lengthResult == 1 && isGranted == PackageManager.PERMISSION_GRANTED;
         if (!isAccepted) getGeneralErrorMessagePermission(AppConfig.GeneralResponseMessage.RC_05);
         return isAccepted;
     }
 
-    private void getGeneralErrorMessagePermission(String message) {
+    public void getGeneralErrorMessagePermission(String message) {
         setAllowing(false);
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSION_CONSTANT_CODE.CAMERA:
-                setAllowing(isPermissionGranted(grantResults.length, grantResults[0]));
-                break;
-            default:
-                getGeneralErrorMessagePermission(AppConfig.GeneralResponseMessage.RC_03);
-                break;
-        }
     }
 }

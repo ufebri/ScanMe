@@ -2,6 +2,10 @@ plugins {
     id 'com.android.application'
 }
 
+def configAppFile = rootProject.file("configapp.properties")
+def configApp = new Properties()
+configApp.load(new FileInputStream(configAppFile))
+
 android {
     compileSdk 31
 
@@ -13,12 +17,17 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        multiDexEnabled true
+
+        buildConfigField("String", "RELEASE_URL", configApp['RELEASE_URL'])
+        buildConfigField("String", "DEV_URL", configApp["DEV_URL"])
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable false
         }
     }
 

@@ -38,7 +38,7 @@ public class HomeActivity extends AppCompatActivity {
         binding.rvHome.setAdapter(new HomeAdapter(this, ResponseDataHelper.getListIntroduction()));
 
         //Hello Text
-        binding.tvTitle.setText(mData.getMessage());
+        binding.tvTitle.setText(mData != null ? mData.getMessage() : "Hello User");
 
         //onClick Button
         binding.btnNext.setOnClickListener(view -> ScanActivity.launchIntent(HomeActivity.this, mData.getAccess_token()));

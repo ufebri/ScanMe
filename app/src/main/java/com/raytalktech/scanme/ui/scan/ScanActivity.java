@@ -10,6 +10,7 @@ import android.util.Size;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
@@ -24,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.raytalktech.scanme.R;
+import com.raytalktech.scanme.config.AppConfig;
 import com.raytalktech.scanme.config.Constant;
 import com.raytalktech.scanme.data.BaseResponse;
 import com.raytalktech.scanme.databinding.ActivityScanBinding;
@@ -43,6 +45,7 @@ public class ScanActivity extends AppCompatActivity {
     private ImageAnalysis imageAnalysis;
     private ScanViewModel viewModel;
     static String token;
+    private PermissionHelper permissionHelper;
 
     public static void launchIntent(Activity caller, String accessToken) {
         Intent intent = new Intent(caller, ScanActivity.class);
@@ -58,9 +61,9 @@ public class ScanActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
-        PermissionHelper permissionHelper = new PermissionHelper(this);
+        permissionHelper = new PermissionHelper(this, Manifest.permission.CAMERA);
 
-        if (permissionHelper.isPermissionAllowing(Manifest.permission.CAMERA))
+        if (permissionHelper.isPermissionAllowing())
             startCamera();
 
         imageAnalysis =
@@ -174,6 +177,20 @@ public class ScanActivity extends AppCompatActivity {
         if (requestCode == Constant.HOME_MENU && resultCode == RESULT_OK) {
             setResult(RESULT_OK);
             finish();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case Constant.PERMISSION_CAMERA:
+                if (permissionHelper.isPermissionGranted(grantResults.length, grantResults[0], permissions[0]))
+                    startCamera();
+                break;
+            default:
+                permissionHelper.getGeneralErrorMessagePermission(AppConfig.GeneralResponseMessage.RC_03);
+                break;
         }
     }
 }

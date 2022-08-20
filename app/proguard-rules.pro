@@ -19,3 +19,20 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-verbose
+
+-ignorewarnings
+-keep public class * extends android.app.Activity
+-keep class com.google.crypto.tink.** { *; }
+
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn retrofit2.Platform$Java8
+-dontwarn com.google.crypto.tink.**
