@@ -1,14 +1,12 @@
 package com.raytalktech.scanme.utils;
 
-import android.content.res.Resources;
+
+import android.content.Context;
+import android.widget.Toast;
 
 public class GeneralHelper {
 
-    /**
-     * @param px image value
-     * @return int
-     */
-    public static int pxToDp(int px) {
-        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    public static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 }

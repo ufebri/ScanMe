@@ -7,7 +7,7 @@ public class AppConfig {
 
     //TODO: Change using buildConfig
     //Change this URL on LocalConfig
-    public static String BASE_URL = "https://learntodroid.com";
+    public static String BASE_URL = "https://atma-dev.com/";
 
     //App can save data last scan
     public static boolean isAppScanAble = false;

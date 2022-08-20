@@ -10,6 +10,8 @@ import com.raytalktech.scanme.data.source.remote.RemoteDataSource;
 import com.raytalktech.scanme.utils.AppExecutors;
 import com.raytalktech.scanme.vo.Resource;
 
+import okhttp3.RequestBody;
+
 public class AppRepository implements AppDataSource {
 
     private volatile static AppRepository INSTANCE = null;
@@ -34,17 +36,12 @@ public class AppRepository implements AppDataSource {
     }
 
     @Override
-    public LiveData<Resource<UserEntity>> checkLoginStatus() {
-        return null;
+    public LiveData<ApiResponse<BaseResponse.ResultLogin>> loginResult(RequestBody requestBody) {
+        return remoteDataSource.getLoginData(requestBody);
     }
 
     @Override
-    public LiveData<Resource<UserEntity>> getUserLoginStatus(String username) {
-        return null;
-    }
-
-    @Override
-    public LiveData<ApiResponse<BaseResponse.ResultData>> qrResultData(String url) {
-        return remoteDataSource.getResultData(url);
+    public LiveData<ApiResponse<BaseResponse.ResultCheckIn>> checkInResult(RequestBody requestBody, String token) {
+        return remoteDataSource.getCheckInData(requestBody, token);
     }
 }

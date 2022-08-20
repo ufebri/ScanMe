@@ -3,6 +3,7 @@ package com.raytalktech.scanme.network;
 import com.raytalktech.scanme.BuildConfig;
 import com.raytalktech.scanme.config.AppConfig;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -20,7 +21,6 @@ public class ApiConfig {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
                 .build();
-
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(AppConfig.BASE_URL)

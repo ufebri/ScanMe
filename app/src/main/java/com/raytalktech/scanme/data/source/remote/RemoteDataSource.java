@@ -6,10 +6,12 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.raytalktech.scanme.config.AppConfig;
 import com.raytalktech.scanme.data.BaseResponse;
 import com.raytalktech.scanme.network.ApiConfig;
 import com.raytalktech.scanme.utils.ResponseDataHelper;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,31 +28,63 @@ public class RemoteDataSource {
         return INSTANCE;
     }
 
-    public LiveData<ApiResponse<BaseResponse.ResultData>> getResultData(String url) {
-        MutableLiveData<ApiResponse<BaseResponse.ResultData>> resultData = new MutableLiveData<>();
-        Call<BaseResponse> client = ApiConfig.getApiService().checkResultScan(url);
-        client.enqueue(new Callback<BaseResponse>() {
+    public LiveData<ApiResponse<BaseResponse.ResultLogin>> getLoginData(RequestBody requestBody) {
+        MutableLiveData<ApiResponse<BaseResponse.ResultLogin>> resultLogin = new MutableLiveData<>();
+        Call<BaseResponse.ResultLogin> client = ApiConfig.getApiService().loginResult(requestBody);
+        client.enqueue(new Callback<BaseResponse.ResultLogin>() {
             @Override
-            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+            public void onResponse(Call<BaseResponse.ResultLogin> call, Response<BaseResponse.ResultLogin> response) {
                 if (response.isSuccessful()) {
                     try {
                         if (response.body() != null)
-                            resultData.setValue(ApiResponse.success(response.body().getResultData()));
+                            if (response.body().getStatus() == null)
+                                resultLogin.setValue(ApiResponse.success(response.body()));
+                            else {
+                                resultLogin.setValue(ApiResponse.error(response.body().getMessage(), response.body()));
+                            }
                         else
-                            resultData.setValue(ApiResponse.empty("03", ResponseDataHelper.getGeneralErrorResponse()));
+                            resultLogin.setValue(ApiResponse.empty(AppConfig.GeneralResponseMessage.RC_03, response.body()));
                     } catch (Exception e) {
                         Log.d(TAG, "onResponse: " + e.getLocalizedMessage());
-                        resultData.setValue(ApiResponse.empty("03", ResponseDataHelper.getGeneralErrorResponse()));
+                        resultLogin.setValue(ApiResponse.error(e.getMessage(), response.body()));
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<BaseResponse> call, Throwable t) {
+            public void onFailure(Call<BaseResponse.ResultLogin> call, Throwable t) {
                 Log.d(TAG, "onFailure: " + t.getLocalizedMessage());
-                resultData.setValue(ApiResponse.error("03", ResponseDataHelper.getGeneralErrorResponse()));
+                resultLogin.setValue(ApiResponse.error(t.getMessage(), ResponseDataHelper.getGeneralErrorResponse(t.getMessage())));
             }
         });
-        return resultData;
+        return resultLogin;
+    }
+
+    public LiveData<ApiResponse<BaseResponse.ResultCheckIn>> getCheckInData(RequestBody requestBody, String token) {
+        MutableLiveData<ApiResponse<BaseResponse.ResultCheckIn>> resultCheckIn = new MutableLiveData<>();
+        Call<BaseResponse.ResultCheckIn> client = ApiConfig.getApiService().checkInResult(requestBody, "Bearer " + token);
+        client.enqueue(new Callback<BaseResponse.ResultCheckIn>() {
+            @Override
+            public void onResponse(Call<BaseResponse.ResultCheckIn> call, Response<BaseResponse.ResultCheckIn> response) {
+                try {
+                    if (response.isSuccessful()) {
+                        resultCheckIn.setValue(ApiResponse.success(response.body()));
+                        Log.d(TAG, "onResponse: " + response.body());
+                    } else {
+                        //TODO: Tambahin kondisi kosong disini
+                    }
+                } catch (Exception e) {
+                    Log.d(TAG, "onResponse: " + e.getLocalizedMessage());
+                    //TODO: Tambahin kondisi gagal
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse.ResultCheckIn> call, Throwable t) {
+                Log.d(TAG, "onFailure: " + t.getLocalizedMessage());
+                //TODO tambahin kondisi gagal
+            }
+        });
+        return resultCheckIn;
     }
 }

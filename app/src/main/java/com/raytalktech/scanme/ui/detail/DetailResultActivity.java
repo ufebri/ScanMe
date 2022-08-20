@@ -19,15 +19,15 @@ import com.raytalktech.scanme.databinding.ContentDetailResultBinding;
 
 public class DetailResultActivity extends AppCompatActivity {
 
-    public static void launchIntent(Activity caller, BaseResponse.ResultData data) {
-        Intent intent = new Intent(caller, DetailResultActivity.class);
-        mData = data;
-        caller.startActivityForResult(intent, 99);
-    }
+//   // public static void launchIntent(Activity caller, BaseResponse.ResultData data) {
+//        Intent intent = new Intent(caller, DetailResultActivity.class);
+//        mData = data;
+//        caller.startActivityForResult(intent, 99);
+//    }
 
     private ActivityDetailResultBinding binding;
     private ContentDetailResultBinding contentBinding;
-    private static BaseResponse.ResultData mData;
+    //private static BaseResponse.ResultData mData;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,9 +58,9 @@ public class DetailResultActivity extends AppCompatActivity {
             }
         });
 
-        binding.llBottomSheet.ivIcon.setImageDrawable(getDrawable(mData.getStatus()));
-        binding.llBottomSheet.tvTitle.setText(mData.getTitle());
-        binding.llBottomSheet.tvMessage.setText(mData.getMessage());
+        //binding.llBottomSheet.ivIcon.setImageDrawable(getDrawable(mData.getStatus()));
+        //binding.llBottomSheet.tvTitle.setText(mData.getTitle());
+       // binding.llBottomSheet.tvMessage.setText(mData.getMessage());
         binding.llBottomSheet.btnAction.setOnClickListener(view -> onBottomSheetGone());
     }
 

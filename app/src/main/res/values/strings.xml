@@ -8,4 +8,5 @@
 
     <!--  General  -->
     <string name="action_ok">OK, Got It!</string>
+    <string name="action_scan_now">Scan Now</string>
 </resources>

@@ -1,5 +1,16 @@
 package com.raytalktech.scanme.ui.scan;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.util.Size;
+import android.view.View;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
@@ -8,23 +19,15 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
-
-import android.Manifest;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.util.Size;
-import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.raytalktech.scanme.R;
+import com.raytalktech.scanme.config.Constant;
 import com.raytalktech.scanme.data.BaseResponse;
 import com.raytalktech.scanme.databinding.ActivityScanBinding;
 import com.raytalktech.scanme.databinding.ContentDetailResultBinding;
-import com.raytalktech.scanme.ui.detail.DetailResultActivity;
 import com.raytalktech.scanme.utils.PermissionHelper;
 import com.raytalktech.scanme.utils.QRCodeFoundListener;
 import com.raytalktech.scanme.utils.QRCodeImageAnalyzer;
@@ -39,6 +42,13 @@ public class ScanActivity extends AppCompatActivity {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ImageAnalysis imageAnalysis;
     private ScanViewModel viewModel;
+    static String token;
+
+    public static void launchIntent(Activity caller, String accessToken) {
+        Intent intent = new Intent(caller, ScanActivity.class);
+        token = accessToken;
+        caller.startActivityForResult(intent, Constant.SCAN_QR_MENU);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +71,7 @@ public class ScanActivity extends AppCompatActivity {
 
         ViewModelFactory factory = ViewModelFactory.getInstance(this.getApplication());
         viewModel = new ViewModelProvider(this, factory).get(ScanViewModel.class);
+        viewModel.setToken(token);
     }
 
     private void startCamera() {
@@ -90,6 +101,7 @@ public class ScanActivity extends AppCompatActivity {
         imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), new QRCodeImageAnalyzer(new QRCodeFoundListener() {
             @Override
             public void onQRCodeFound(String _qrCode) {
+                binding.previewCamera.setVisibility(View.GONE);
                 processResult(_qrCode);
             }
 
@@ -99,16 +111,29 @@ public class ScanActivity extends AppCompatActivity {
             }
         }));
 
-        Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, imageAnalysis, preview);
+        Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
     }
 
-    private void processResult(String url) {
+    private void processResult(String code) {
         binding.pbScan.setVisibility(View.VISIBLE);
-        viewModel.checkURLValidation(url);
-        showBottomSheet(viewModel.getData());
+        viewModel.setCodeResult(code);
+
+        viewModel.getResultCheckIn().observe(this, result -> {
+            try {
+                if (result.body != null) {
+                    switch (result.status) {
+                        case SUCCESS:
+                            showBottomSheet(result.body);
+                            break;
+                    }
+                }
+            } catch (Exception e) {
+                Log.d("TAG", "processResult: " + e.getLocalizedMessage());
+            }
+        });
     }
 
-    private void showBottomSheet(BaseResponse.ResultData mData) {
+    private void showBottomSheet(BaseResponse.ResultCheckIn mData) {
         binding.pbScan.setVisibility(View.GONE);
 
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetBinding.getRoot());
@@ -117,22 +142,23 @@ public class ScanActivity extends AppCompatActivity {
         bottomSheetBinding.getRoot().setVisibility(View.VISIBLE);
 
         bottomSheetBinding.ivIcon.setImageDrawable(getDrawable(mData.getStatus()));
-        bottomSheetBinding.tvTitle.setText(mData.getTitle());
+        bottomSheetBinding.tvTitle.setText(mData.getMessage());
         bottomSheetBinding.tvMessage.setText(mData.getMessage());
         bottomSheetBinding.btnAction.setOnClickListener(view -> onBottomSheetGone());
     }
 
     private void onBottomSheetGone() {
+        binding.previewCamera.setVisibility(View.VISIBLE);
         bottomSheetBinding.getRoot().setVisibility(View.GONE);
     }
 
     private Drawable getDrawable(String id) {
         Drawable drawable;
         switch (id) {
-            case "04":
+            case "200":
                 drawable = ContextCompat.getDrawable(this, R.drawable.ic_success);
                 break;
-            case "02":
+            case "403":
                 drawable = ContextCompat.getDrawable(this, R.drawable.ic_warning);
                 break;
             default:
@@ -142,4 +168,12 @@ public class ScanActivity extends AppCompatActivity {
         return drawable;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.HOME_MENU && resultCode == RESULT_OK) {
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
 }
