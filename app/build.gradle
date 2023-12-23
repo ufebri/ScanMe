@@ -7,12 +7,12 @@ def configApp = new Properties()
 configApp.load(new FileInputStream(configAppFile))
 
 android {
-    compileSdk 31
-
+    compileSdk 34
+    namespace "com.raytalktech.scanerme"
     defaultConfig {
         applicationId "com.raytalktech.scanerme"
         minSdk 21
-        targetSdk 31
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -32,6 +32,10 @@ android {
 
     viewBinding {
         enabled = true
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {
