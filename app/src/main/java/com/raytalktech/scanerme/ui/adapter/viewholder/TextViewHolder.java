@@ -20,7 +20,7 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setTitleText(Context context, String text) {
-        tvText.setTextAppearance(context, R.style.TextAppearance_AppCompat_Title);
+        tvText.setTextAppearance(context, androidx.appcompat.R.style.TextAppearance_AppCompat_Title);
         tvText.setText(text);
     }
 
