@@ -41,7 +41,7 @@ public class HomeActivity extends AppCompatActivity {
         binding.tvTitle.setText(mData != null ? mData.getMessage() : "Hello User");
 
         //onClick Button
-        binding.btnNext.setOnClickListener(view -> ScanActivity.launchIntent(HomeActivity.this, mData.getAccess_token()));
+        binding.btnNext.setOnClickListener(view -> ScanActivity.launchIntent(HomeActivity.this));
     }
 
     @Override
