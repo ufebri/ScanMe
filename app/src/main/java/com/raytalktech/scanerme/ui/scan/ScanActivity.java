@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Size;
 import android.view.View;
 import android.widget.Toast;
@@ -27,7 +26,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.raytalktech.scanerme.R;
 import com.raytalktech.scanerme.config.AppConfig;
 import com.raytalktech.scanerme.config.Constant;
-import com.raytalktech.scanerme.data.BaseResponse;
 import com.raytalktech.scanerme.databinding.ActivityScanBinding;
 import com.raytalktech.scanerme.databinding.ContentDetailResultBinding;
 import com.raytalktech.scanerme.utils.PermissionHelper;
@@ -47,9 +45,8 @@ public class ScanActivity extends AppCompatActivity {
     static String token;
     private PermissionHelper permissionHelper;
 
-    public static void launchIntent(Activity caller, String accessToken) {
+    public static void launchIntent(Activity caller) {
         Intent intent = new Intent(caller, ScanActivity.class);
-        token = accessToken;
         caller.startActivityForResult(intent, Constant.SCAN_QR_MENU);
     }
 
@@ -119,24 +116,11 @@ public class ScanActivity extends AppCompatActivity {
 
     private void processResult(String code) {
         binding.pbScan.setVisibility(View.VISIBLE);
-        viewModel.setCodeResult(code);
 
-        viewModel.getResultCheckIn().observe(this, result -> {
-            try {
-                if (result.body != null) {
-                    switch (result.status) {
-                        case SUCCESS:
-                            showBottomSheet(result.body);
-                            break;
-                    }
-                }
-            } catch (Exception e) {
-                Log.d("TAG", "processResult: " + e.getLocalizedMessage());
-            }
-        });
+        showBottomSheet(code);
     }
 
-    private void showBottomSheet(BaseResponse.ResultCheckIn mData) {
+    private void showBottomSheet(String mData) {
         binding.pbScan.setVisibility(View.GONE);
 
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetBinding.getRoot());
@@ -144,9 +128,9 @@ public class ScanActivity extends AppCompatActivity {
 
         bottomSheetBinding.getRoot().setVisibility(View.VISIBLE);
 
-        bottomSheetBinding.ivIcon.setImageDrawable(getDrawable(mData.getStatus()));
-        bottomSheetBinding.tvTitle.setText(mData.getMessage());
-        bottomSheetBinding.tvMessage.setText(mData.getMessage());
+        bottomSheetBinding.ivIcon.setImageDrawable(getDrawable("200"));
+        bottomSheetBinding.tvTitle.setText("Result");
+        bottomSheetBinding.tvMessage.setText(mData);
         bottomSheetBinding.btnAction.setOnClickListener(view -> onBottomSheetGone());
     }
 

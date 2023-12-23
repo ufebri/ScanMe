@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.raytalktech.scanerme.databinding.ActivitySplashScreenBinding;
+import com.raytalktech.scanerme.ui.home.HomeActivity;
 import com.raytalktech.scanerme.ui.login.LoginActivity;
 
 public class SplashActivity extends AppCompatActivity {
@@ -22,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
         binding.tvTextVersion.setText(String.format("v%s", BuildConfig.VERSION_NAME));
 
         new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
             finish();
         }, 5000);
     }
