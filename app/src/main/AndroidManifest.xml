@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.raytalktech.scanme">
+    package="com.raytalktech.scanerme">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScanMe">
         <activity
-            android:name=".SplashActivity"
+            android:name="com.raytalktech.scanerme.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -26,17 +26,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.home.HomeActivity"
+            android:name="com.raytalktech.scanerme.ui.home.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.scan.ScanActivity"
+            android:name="com.raytalktech.scanerme.ui.scan.ScanActivity"
             android:exported="true" />
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name="com.raytalktech.scanerme.ui.login.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.ScanMe.NoActionBar" />
         <activity
-            android:name=".ui.detail.DetailResultActivity"
+            android:name="com.raytalktech.scanerme.ui.detail.DetailResultActivity"
             android:exported="true" />
     </application>
 
